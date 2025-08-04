@@ -25,7 +25,7 @@ wireshark -v # 输出with需包含 +Lua x.x.x
 
 ## 保存为基础镜像
 docker commit wireshark:ubuntu
-docker commit docker.fengchuang.tech/menace/tshark:ubuntu
+docker commit wireshark_ubuntu docker.fengchuang.tech/menace/tshark:ubuntu
 ```
 
 # Win 环境编译

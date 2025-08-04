@@ -1046,55 +1046,32 @@ static GList *capture_opts_get_interface_list(int *err, char **err_str)
 
 int main(int argc, char *argv[])
 {
-    // clock_t start, end;
-    // start = clock();
 
-    // process_main_init();
+    // Initialize the process and set up the environment.
 
-    // const uint8_t packet_data_lua[] = {
-    //     /* 0000 */ 0x08, 0x00, 0x27, 0x9d, 0x3a, 0x8d, 0x08, 0x00, 0x27, 0x7f, 0xc8, 0xbc, 0x08, 0x00, 0x45, 0x00,
-    //     /* 0010 */ 0x00, 0x9c, 0x5b, 0x5d, 0x40, 0x00, 0x40, 0x06, 0xec, 0xc8, 0xc0, 0xa8, 0x38, 0x72, 0xc0, 0xa8,
-    //     /* 0020 */ 0x38, 0x73, 0x2d, 0xdc, 0xc4, 0x12, 0xdb, 0x20, 0x3b, 0xd4, 0x6f, 0x45, 0xfd, 0x19, 0x50, 0x18,
-    //     /* 0030 */ 0x01, 0xf5, 0xd7, 0xc8, 0x00, 0x00, 0x00, 0x11, 0x7e, 0x87, 0x40, 0x00, 0x00, 0x0c, 0x57, 0x34,
-    //     /* 0040 */ 0x04, 0x00, 0x03, 0x4c, 0x41, 0x2c, 0x0a, 0x83, 0x87, 0x38, 0x30, 0xf2, 0xdd, 0xc0, 0xa0, 0x00,
-    //     /* 0050 */ 0x20, 0xf0, 0x10, 0x0d, 0x8d, 0xb0, 0x40, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x59, 0x2d, 0x2d,
-    //     /* 0060 */ 0x2d, 0x2d, 0x2d, 0x0a, 0x00, 0x26, 0xa0, 0x80, 0x00, 0x42, 0xe5, 0xe4, 0x83, 0x92, 0x30, 0xc3,
-    //     /* 0070 */ 0xff, 0xe0, 0x98, 0x08, 0x48, 0x9f, 0xa1, 0xef, 0x08, 0x7c, 0xc9, 0x0b, 0xfa, 0xfc, 0x28, 0x6c,
-    //     /* 0080 */ 0x31, 0x88, 0xb5, 0xee, 0x65, 0x43, 0xcc, 0x9a, 0x1b, 0x82, 0xff, 0x03, 0x04, 0x20, 0x02, 0x0a,
-    //     /* 0090 */ 0x00, 0x83, 0xff, 0x03, 0x14, 0x03, 0x0a, 0x44, 0x65, 0x76, 0x69, 0x63, 0x65, 0x00, 0x00, 0x00,
-    //     /* 00A0 */ 0x00, 0x08, 0x84, 0x80, 0x00, 0x01, 0x00, 0x00, 0x00};
+    clock_t start, end;
+    start = clock();
+    // unsigned char bytes[] = {0x0, 0x20, 0x78, 0x0, 0x62, 0xd, 0x0, 0x2, 0xb3, 0xce, 0x70, 0x51, 0x8, 0x0, 0x45, 0x0, 0x0, 0x31, 0xff, 0xe5, 0x40, 0x0, 0x80, 0x6, 0xe6, 0xa5, 0xa, 0x0, 0x0, 0x3, 0xa, 0x0, 0x0, 0x39, 0x1, 0xf6, 0xa, 0x12, 0x70, 0xf1, 0xad, 0x1b, 0x61, 0x97, 0xf1, 0x8f, 0x50, 0x18, 0xff, 0xf3, 0x8, 0xcd, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x3, 0xa, 0x88, 0xb};
+    const uint8_t packet_data_mqtt[] = {0xb2, 0x21, 0x3, 0x18, 0xbe, 0xf6, 0x7c, 0xfa, 0xc7, 0x17, 0x1e, 0xfd, 0x8, 0x0, 0x45, 0x0, 0x0, 0x5c, 0x0, 0x1, 0x0, 0x0, 0x40, 0x6, 0xae, 0xb9, 0x25, 0x6c, 0x2a, 0x7a, 0x11, 0x9, 0x6a, 0xf3, 0x27, 0x5c, 0x7, 0x5b, 0x0, 0x1, 0x83, 0xec, 0x0, 0x0, 0x0, 0x0, 0x50, 0x18, 0x20, 0x0, 0x49, 0x8e, 0x0, 0x0, 0x10, 0x32, 0x0, 0x6, 0x4d, 0x51, 0x49, 0x73, 0x64, 0x70, 0x3, 0x2, 0x0, 0x3c, 0x0, 0x24, 0x30, 0x63, 0x35, 0x62, 0x37, 0x65, 0x37, 0x34, 0x2d, 0x32, 0x32, 0x37, 0x63, 0x2d, 0x34, 0x34, 0x61, 0x30, 0x2d, 0x62, 0x39, 0x65, 0x64, 0x2d, 0x30, 0x61, 0x61, 0x32, 0x36, 0x34, 0x30, 0x35, 0x63, 0x35, 0x66, 0x33};
 
-    // const uint8_t packet_data_so[] = {
-    //     /* 0000 */ 0x00, 0x1b, 0x1b, 0x60, 0x0b, 0x91, 0x28, 0x63, 0x36, 0x9a, 0x21, 0x04, 0x08, 0x00, 0x45, 0x00,
-    //     /* 0010 */ 0x00, 0x6c, 0x7c, 0xd2, 0x00, 0x00, 0x40, 0x06, 0x0c, 0x41, 0xc0, 0xa8, 0x38, 0x0f, 0xc0, 0xa8,
-    //     /* 0020 */ 0x38, 0x19, 0x00, 0x66, 0xc0, 0x0f, 0x53, 0x58, 0xb4, 0x5a, 0x08, 0xc5, 0xfe, 0xbe, 0x50, 0x18,
-    //     /* 0030 */ 0x20, 0x00, 0xb6, 0x51, 0x00, 0x00, 0x03, 0x00, 0x00, 0x44, 0x02, 0xf0, 0x80, 0x72, 0x03, 0x00,
-    //     /* 0040 */ 0x35, 0x20, 0xf9, 0xca, 0x4b, 0x8f, 0x2f, 0xea, 0xa2, 0x78, 0x68, 0xef, 0xbf, 0xaa, 0x4b, 0xd0,
-    //     /* 0050 */ 0x77, 0xc4, 0x9c, 0x23, 0xd8, 0x74, 0xc3, 0x0c, 0xc2, 0xe2, 0x95, 0x92, 0x7f, 0x01, 0x8d, 0x96,
-    //     /* 0060 */ 0x3c, 0x46, 0x33, 0x70, 0x00, 0x00, 0xe5, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x0b, 0x08, 0x52,
-    //     /* 0070 */ 0xf0, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x72, 0x03, 0x00, 0x00};
+    process_main_init();
 
-    // for (int i = 0; i < 1; ++i)
-    // {
-    //     packet_result result = dissect_single_packet(packet_data_lua, 137);
-    //     ws_info("protocol %s %s->%s %s", result.packet_info.proto, result.packet_info.sip, result.packet_info.dip, result.packet_info.desc);
-    //     free_packet_result(&result);
-    // }
+    for (int i = 0; i < 5; ++i)
+    {
+        packet_result result = dissect_single_packet(packet_data_mqtt, 137);
+        ws_info("protocol-test-packet %s %s->%s %s", result.packet_info.proto, result.packet_info.sip, result.packet_info.dip, result.packet_info.desc);
+        free_packet_result(&result);
+    }
 
-    // for (int i = 0; i < 1; ++i)
-    // {
-    //     packet_result result = dissect_single_packet(packet_data_so, 137);
-    //     ws_info("protocol %s %s->%s %s", result.packet_info.proto, result.packet_info.sip, result.packet_info.dip, result.packet_info.desc);
-    //     free_packet_result(&result);
-    // }
+    end = clock();
+    double cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+    ws_info("测试逐帧耗时: %f s", cpu_time_used);
 
-    // end = clock();
-    // double cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
-    // ws_info("逐帧耗时: %f s", cpu_time_used);
+    process_main_after();
+    ws_info("tshark main process started");
+    return 0;
 
-    // process_main_after();
-
-    // return 0;
+    // 以下为源码捕获器部分
 
     char *err_msg;
     int opt;
@@ -5640,8 +5617,8 @@ void free_packet_result(packet_result *array)
     g_array_free(array->protocol_info, TRUE);
 }
 
-wtap_rec rec;               // 数据包记录
-epan_dissect_t *edt = NULL; // 解析器
+static guint32 global_frame_number = 0; // 全局帧编号
+static guint64 global_cum_bytes = 0;    // 全局累计字节数
 
 void process_main_init(void)
 {
@@ -5664,7 +5641,6 @@ void process_main_init(void)
 
     init_process_policies();
     relinquish_special_privs_perm();
-    print_current_user();
 
     if (configuration_init("/usr/local/lib/wireshark/") != NULL)
     {
@@ -5692,20 +5668,7 @@ void process_main_init(void)
 #endif
 
     cap_file_init(&cfile);
-    cfile.epan = tshark_epan_new(&cfile);
-    build_column_format_array(&cfile.cinfo, epan_load_settings()->num_cols, TRUE);
 
-    // init global rec
-    wtap_rec_init(&rec, 1514);
-    rec.rec_type = REC_TYPE_PACKET;
-    rec.presence_flags = WTAP_HAS_TS | WTAP_HAS_CAP_LEN;
-    rec.ts.secs = 0;
-    rec.ts.nsecs = 0;
-
-    // init global edt epan
-    edt = epan_dissect_new(cfile.epan, true, true);
-    ws_info("plugin %d count %s", plugins_get_count(), get_plugins_dir());
-    ws_info("lua secript %d count %s", wslua_count_plugins(), get_plugins_dir());
     ws_info("tshark version %s", get_ws_vcs_version_info());
 }
 
@@ -5720,7 +5683,6 @@ void process_main_after(void)
     }
 #endif
 
-    epan_dissect_free(edt);
     col_cleanup(&cfile.cinfo);
     wtap_cleanup();
     free_progdirs();
@@ -5731,9 +5693,15 @@ void process_main_after(void)
 static void
 dissect_packet_from_memory(const uint8_t *data, size_t len, packet_result *result)
 {
-    frame_data fdata; // 帧数据
-    wtap_rec_reset(&rec);
 
+    epan_dissect_t *local_edt = epan_dissect_new(cfile.epan, true, true);
+    wtap_rec rec;
+    frame_data fdata;
+
+    wtap_rec_init(&rec, 1514);
+
+    rec.rec_type = REC_TYPE_PACKET;
+    rec.presence_flags = WTAP_HAS_TS | WTAP_HAS_CAP_LEN;
     rec.rec_header.packet_header.len = (guint32)len;
     rec.rec_header.packet_header.caplen = (guint32)len;
     rec.rec_header.packet_header.pkt_encap = WTAP_ENCAP_ETHERNET;
@@ -5742,14 +5710,17 @@ dissect_packet_from_memory(const uint8_t *data, size_t len, packet_result *resul
     ws_buffer_assure_space(&rec.data, len);
     memcpy(ws_buffer_start_ptr(&rec.data), data, len);
 
+    col_clear(&cfile.cinfo, TRUE);
+    build_column_format_array(&cfile.cinfo, epan_load_settings()->num_cols, TRUE);
+
     column_info *cinfo = &cfile.cinfo;
     if (cinfo)
     {
-        col_custom_prime_edt(edt, cinfo);
-        epan_dissect_fill_in_columns(edt, false, true);
+        col_custom_prime_edt(local_edt, cinfo);
+        epan_dissect_fill_in_columns(local_edt, false, true);
     }
 
-    frame_data_init(&fdata, 0, &rec, 0, cum_bytes);
+    frame_data_init(&fdata, ++global_frame_number, &rec, 0, global_cum_bytes);
     frame_data_set_before_dissect(&fdata, &cfile.elapsed_time, &cfile.provider.ref, cfile.provider.prev_dis);
     if (cfile.provider.ref == &fdata)
     {
@@ -5757,7 +5728,7 @@ dissect_packet_from_memory(const uint8_t *data, size_t len, packet_result *resul
         cfile.provider.ref = &ref_frame;
     }
 
-    epan_dissect_run(edt, cfile.cd_t, &rec, &fdata, cinfo);
+    epan_dissect_run(local_edt, cfile.cd_t, &rec, &fdata, cinfo);
 
     if (result)
     {
@@ -5770,12 +5741,21 @@ dissect_packet_from_memory(const uint8_t *data, size_t len, packet_result *resul
         }
 
         result->protocol_info = g_array_new(FALSE, FALSE, sizeof(protocol_data));
-        write_binary_proto_tree(edt, result->protocol_info);
+        write_binary_proto_tree(local_edt, result->protocol_info);
     }
 
+    ws_info("Frame %u: encap=%d, timeNs:%d, proto=%s",
+            global_frame_number,
+            rec.rec_header.packet_header.pkt_encap,
+            rec.ts.nsecs,
+            result->packet_info.proto);
+
+    global_cum_bytes += rec.rec_header.packet_header.caplen;
+    cfile.count = global_frame_number;
+
     ws_buffer_free(&rec.data);
-    epan_dissect_reset(edt);
     frame_data_destroy(&fdata);
+    epan_dissect_free(local_edt);
     wtap_cleanup();
 
     return;

@@ -26,24 +26,25 @@
 #include <wsutil/report_message.h>
 #include <wsutil/wslog.h>
 
-typedef struct _plugin {
-    GModule        *handle;       /* handle returned by g_module_open */
-    char           *name;         /* plugin name */
-    const char     *version;      /* plugin version */
-    uint32_t        flags;        /* plugin flags */
+typedef struct _plugin
+{
+    GModule *handle;     /* handle returned by g_module_open */
+    char *name;          /* plugin name */
+    const char *version; /* plugin version */
+    uint32_t flags;      /* plugin flags */
 } plugin;
 
-#define TYPE_DIR_EPAN       "epan"
-#define TYPE_DIR_WIRETAP    "wiretap"
-#define TYPE_DIR_CODECS     "codecs"
+#define TYPE_DIR_EPAN "epan"
+#define TYPE_DIR_WIRETAP "wiretap"
+#define TYPE_DIR_CODECS "codecs"
 
 static GSList *plugins_module_list;
-
 
 static inline const char *
 type_to_dir(plugin_type_e type)
 {
-    switch (type) {
+    switch (type)
+    {
     case WS_PLUGIN_EPAN:
         return TYPE_DIR_EPAN;
     case WS_PLUGIN_WIRETAP:
@@ -51,7 +52,7 @@ type_to_dir(plugin_type_e type)
     case WS_PLUGIN_CODEC:
         return TYPE_DIR_CODECS;
     default:
-        ws_error("Unknown plugin type: %u. Aborting.", (unsigned) type);
+        ws_error("Unknown plugin type: %u. Aborting.", (unsigned)type);
         break;
     }
     ws_assert_not_reached();
@@ -79,7 +80,7 @@ flags_to_str(uint32_t flags)
 }
 
 static void
-free_plugin(void * data)
+free_plugin(void *data)
 {
     plugin *p = (plugin *)data;
     g_module_close(p->handle);
@@ -96,24 +97,27 @@ compare_plugins(const void *a, const void *b)
 static bool
 pass_plugin_version_compatibility(GModule *handle, const char *name)
 {
-    void * symb;
+    void *symb;
     int major, minor;
 
-    if(!g_module_symbol(handle, "plugin_want_major", &symb)) {
+    if (!g_module_symbol(handle, "plugin_want_major", &symb))
+    {
         report_failure("The plugin '%s' has no \"plugin_want_major\" symbol", name);
         return false;
     }
     major = *(int *)symb;
 
-    if(!g_module_symbol(handle, "plugin_want_minor", &symb)) {
+    if (!g_module_symbol(handle, "plugin_want_minor", &symb))
+    {
         report_failure("The plugin '%s' has no \"plugin_want_minor\" symbol", name);
         return false;
     }
     minor = *(int *)symb;
 
-    if (major != VERSION_MAJOR || minor != VERSION_MINOR) {
+    if (major != VERSION_MAJOR || minor != VERSION_MINOR)
+    {
         report_failure("The plugin '%s' was compiled for Wireshark version %d.%d",
-                            name, major, minor);
+                       name, major, minor);
         return false;
     }
 
@@ -130,15 +134,15 @@ pass_plugin_version_compatibility(GModule *handle, const char *name)
 static void
 scan_plugins_dir(GHashTable *plugins_module, const char *dirpath, plugin_type_e type, bool append_type)
 {
-    GDir          *dir;
-    const char    *name;            /* current file name */
-    char          *plugin_folder;
-    char          *plugin_file;     /* current file full path */
-    GModule       *handle;          /* handle returned by g_module_open */
-    void *         symbol;
-    const char    *plug_version;
-    uint32_t       flags;
-    plugin        *new_plug;
+    GDir *dir;
+    const char *name; /* current file name */
+    char *plugin_folder;
+    char *plugin_file; /* current file full path */
+    GModule *handle;   /* handle returned by g_module_open */
+    void *symbol;
+    const char *plug_version;
+    uint32_t flags;
+    plugin *new_plug;
 
     if (append_type)
         plugin_folder = g_build_filename(dirpath, type_to_dir(type), (char *)NULL);
@@ -146,14 +150,16 @@ scan_plugins_dir(GHashTable *plugins_module, const char *dirpath, plugin_type_e 
         plugin_folder = g_strdup(dirpath);
 
     dir = g_dir_open(plugin_folder, 0, NULL);
-    if (dir == NULL) {
+    if (dir == NULL)
+    {
         g_free(plugin_folder);
         return;
     }
 
     ws_debug("Scanning plugins folder \"%s\"", plugin_folder);
 
-    while ((name = g_dir_read_name(dir)) != NULL) {
+    while ((name = g_dir_read_name(dir)) != NULL)
+    {
         /* Skip anything but files with .dll or .so. */
         if (!g_str_has_suffix(name, MODULE_SUFFIX))
             continue;
@@ -161,19 +167,22 @@ scan_plugins_dir(GHashTable *plugins_module, const char *dirpath, plugin_type_e 
         /*
          * Check if the same name is already registered.
          */
-        if (g_hash_table_lookup(plugins_module, name)) {
+        if (g_hash_table_lookup(plugins_module, name))
+        {
             /* Yes, it is. */
             report_warning("The plugin '%s' was found "
-                                "in multiple directories", name);
+                           "in multiple directories",
+                           name);
             continue;
         }
 
         plugin_file = g_build_filename(plugin_folder, name, (char *)NULL);
         handle = g_module_open(plugin_file, G_MODULE_BIND_LOCAL);
-        if (handle == NULL) {
+        if (handle == NULL)
+        {
             /* g_module_error() provides file path. */
             report_failure("Couldn't load plugin '%s': %s", name,
-                            g_module_error());
+                           g_module_error());
             g_free(plugin_file);
             continue;
         }
@@ -187,24 +196,26 @@ scan_plugins_dir(GHashTable *plugins_module, const char *dirpath, plugin_type_e 
         }
         plug_version = (const char *)symbol;
 
-        if (!pass_plugin_version_compatibility(handle, name)) {
+        if (!pass_plugin_version_compatibility(handle, name))
+        {
             g_module_close(handle);
             g_free(plugin_file);
             continue;
         }
 
         /* Search for the entry point for the plugin registration function */
-        if (!g_module_symbol(handle, "plugin_register", &symbol)) {
+        if (!g_module_symbol(handle, "plugin_register", &symbol))
+        {
             report_failure("The plugin '%s' has no \"plugin_register\" symbol", name);
             g_module_close(handle);
             g_free(plugin_file);
             continue;
         }
 
-DIAG_OFF_PEDANTIC
-        /* Found it, call the plugin registration function. */
-        ((plugin_register_func)symbol)();
-DIAG_ON_PEDANTIC
+        DIAG_OFF_PEDANTIC
+            /* Found it, call the plugin registration function. */
+            ((plugin_register_func)symbol)();
+        DIAG_ON_PEDANTIC
 
         /* Search for the (optional) description flag registration function */
         if (g_module_symbol(handle, "plugin_describe", &symbol))
@@ -220,7 +231,7 @@ DIAG_ON_PEDANTIC
 
         /* Add it to the list of plugins. */
         g_hash_table_replace(plugins_module, new_plug->name, new_plug);
-        ws_info("Registered plugin: %s (%s)", new_plug->name, plugin_file);
+        //  ws_info("Registered plugin: %s (%s)", new_plug->name, plugin_file);
         g_free(plugin_file);
     }
     ws_dir_close(dir);
@@ -251,7 +262,8 @@ plugins_init(plugin_type_e type)
      * if we need privileges to start capturing, we'd need to
      * reclaim them before each time we start capturing.)
      */
-    if (!started_with_special_privs()) {
+    if (!started_with_special_privs())
+    {
         scan_plugins_dir(plugins_module, get_plugins_pers_dir_with_version(), type, true);
     }
 
@@ -265,18 +277,21 @@ plugins_get_descriptions(plugin_description_callback callback, void *callback_da
 {
     GPtrArray *plugins_array = g_ptr_array_new();
     GHashTableIter iter;
-    void * value;
+    void *value;
 
-    for (GSList *l = plugins_module_list; l != NULL; l = l->next) {
-        g_hash_table_iter_init (&iter, (GHashTable *)l->data);
-        while (g_hash_table_iter_next (&iter, NULL, &value)) {
+    for (GSList *l = plugins_module_list; l != NULL; l = l->next)
+    {
+        g_hash_table_iter_init(&iter, (GHashTable *)l->data);
+        while (g_hash_table_iter_next(&iter, NULL, &value))
+        {
             g_ptr_array_add(plugins_array, value);
         }
     }
 
     g_ptr_array_sort(plugins_array, compare_plugins);
 
-    for (unsigned i = 0; i < plugins_array->len; i++) {
+    for (unsigned i = 0; i < plugins_array->len; i++)
+    {
         plugin *plug = (plugin *)plugins_array->pdata[i];
         callback(plug->name, plug->version, plug->flags, g_module_name(plug->handle), callback_data);
     }
@@ -289,28 +304,27 @@ print_plugin_description(const char *name, const char *version,
                          uint32_t flags, const char *filename,
                          void *user_data _U_)
 {
-    printf("%-16s\t%s\t%s\t%s\n", name, version, flags_to_str(flags), filename);
+    ws_info("Registered plugin: %s (%s) %s %s", name, version, flags_to_str(flags), filename);
+    // printf("  %-16s\t%s\t%s\t%s\n", name, version, flags_to_str(flags), filename);
 }
 
-void
-plugins_dump_all(void)
+void plugins_dump_all(void)
 {
     plugins_get_descriptions(print_plugin_description, NULL);
 }
 
-int
-plugins_get_count(void)
+int plugins_get_count(void)
 {
     unsigned count = 0;
 
-    for (GSList *l = plugins_module_list; l != NULL; l = l->next) {
+    for (GSList *l = plugins_module_list; l != NULL; l = l->next)
+    {
         count += g_hash_table_size((GHashTable *)l->data);
     }
     return count;
 }
 
-void
-plugins_cleanup(plugins_t *plugins)
+void plugins_cleanup(plugins_t *plugins)
 {
     if (!plugins)
         return;
@@ -319,8 +333,7 @@ plugins_cleanup(plugins_t *plugins)
     g_hash_table_destroy((GHashTable *)plugins);
 }
 
-bool
-plugins_supported(void)
+bool plugins_supported(void)
 {
     return g_module_supported();
 }
