@@ -24,8 +24,12 @@ ldconfig -p | grep libtshark.so
 wireshark -v # 输出with需包含 +Lua x.x.x
 
 ## 保存为基础镜像
-docker commit wireshark:ubuntu
+docker commit wireshark:ubuntu repository_images_name:tag
+## 例如
 docker commit wireshark_ubuntu docker.fengchuang.tech/menace/tshark:ubuntu
+## 最新版本
+docker commit wireshark_ubuntu docker.fengchuang.tech/menace/tshark:v4.5.0
+docker commit wireshark_ubuntu docker.fengchuang.tech/menace/tshark:latest
 ```
 
 # Win 环境编译
